@@ -1,0 +1,457 @@
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.DefaultCellEditor;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.DefaultTableModel;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author subha
+ */
+public class JFPizzaOrder extends javax.swing.JFrame {
+
+    /**
+     * Creates new form JFPizzaOrder
+     */
+    DefaultTableModel model;
+
+    public JFPizzaOrder() {
+        initComponents();
+        model = (DefaultTableModel) tblOrderDetails.getModel();
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String ConnectionUrl = "jdbc:mysql://localhost:3306/test?" + "user=root&password=subhan";
+            Connection con = DriverManager.getConnection(ConnectionUrl);
+
+            Statement stmt_client = null;
+            ResultSet rs_client = null;
+
+            Statement stmt_order = null;
+            ResultSet rs_order = null;
+
+            Statement stmt_pizza_types = null;
+            ResultSet rs_pizza_types = null;
+
+            cbxClientID.addItem("");
+            cbxPizzaTypes.addItem("");
+
+            String SQL_Client = "SELECT * FROM tblclient";
+            stmt_client = con.createStatement();
+            rs_client = stmt_client.executeQuery(SQL_Client);
+
+            while (rs_client.next()) {
+                cbxClientID.addItem(rs_client.getString("ClientId"));
+            }
+
+            String SQL_Order = "SELECT MAX(invoiceid) as maxinvoiceid FROM tblorder";
+            System.out.println(SQL_Order);
+            stmt_order = con.createStatement();
+            rs_order = stmt_order.executeQuery(SQL_Order);
+
+            if (rs_order.next()) {
+                int i_invoiceid = rs_order.getInt("maxinvoiceid") + 1;
+                String invoiceid = "" + i_invoiceid;
+                txtOrderID.setText(invoiceid);
+            }
+
+            String SQL_Pizza_Types = "SELECT * FROM tblpizza";
+            stmt_pizza_types = con.createStatement();
+            rs_pizza_types = stmt_pizza_types.executeQuery(SQL_Pizza_Types);
+
+            while (rs_pizza_types.next()) {
+                cbxPizzaTypes.addItem(rs_pizza_types.getString("PizzaType"));
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception: " + e.toString());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class not found exception:" + e.toString());
+        }
+    }
+
+    public void UpdateTable(String strSQL) {
+        model.setRowCount(0);
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String ConnectionUrl = "jdbc:mysql://localhost:3306/test?" + "user=root&password=subhan";
+            Connection con = DriverManager.getConnection(ConnectionUrl);
+            Statement stmt = null;
+            ResultSet rs = null;
+
+            String SQL = "SELECT * FROM tblpizza";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            
+            int rowsEffected = stmt.executeUpdate(strSQL);
+            System.out.println(rowsEffected + " rows effected");
+        } catch (SQLException e) {
+            System.out.println("SQL Exception: " + e.toString());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class not found exception:" + e.toString());
+        }
+    }
+    
+    public String getPizzaCost(Object PizzaType){
+        String cost = "";
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String ConnectionUrl = "jdbc:mysql://localhost:3306/test?" + "user=root&password=subhan";
+            Connection con = DriverManager.getConnection(ConnectionUrl);
+            Statement stmt = null;
+            ResultSet rs = null;
+            ResultSet rs_pizza = null;
+
+            String SQL = "SELECT * FROM tblpizza";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            
+            rs_pizza = stmt.executeQuery("SELECT Cost FROM tblpizza WHERE PizzaType = '" + PizzaType + "'");
+            cost = rs_pizza.getString("Cost");
+            
+        } catch (SQLException e) {
+            System.out.println("SQL Exception: " + e.toString());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class not found exception:" + e.toString());
+        }
+        return cost;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        cbxClientID = new javax.swing.JComboBox<>();
+        txtOrderID = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        cbxPizzaTypes = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblOrderDetails = new javax.swing.JTable();
+        clear = new javax.swing.JButton();
+        processNew = new javax.swing.JButton();
+        cancel = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        jLabel1.setText("Process New Order");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 16)); // NOI18N
+        jLabel2.setText("Order");
+
+        jLabel3.setText("Order ID: ");
+
+        jLabel4.setText("Client ID: ");
+
+        jLabel5.setText("Order Date: ");
+
+        cbxClientID.setMaximumRowCount(256);
+        cbxClientID.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+        cbxClientID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxClientIDActionPerformed(evt);
+            }
+        });
+
+        txtOrderID.setFont(new java.awt.Font("Consolas", 0, 16)); // NOI18N
+
+        jLabel6.setText("Pizza Types");
+
+        cbxPizzaTypes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 2, 16)); // NOI18N
+        jLabel7.setText("Order Details");
+
+        tblOrderDetails.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "OrderID", "PizzaType", "Quantity", "TotalCost"
+            }
+        ));
+        tblOrderDetails.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblOrderDetailsMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblOrderDetails);
+
+        clear.setText("Clear");
+
+        processNew.setText("Process New");
+        processNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                processNewActionPerformed(evt);
+            }
+        });
+
+        cancel.setText("Cancel");
+        cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(41, 41, 41)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel3))
+                                        .addGap(31, 31, 31)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(cbxClientID, 0, 33, Short.MAX_VALUE)
+                                            .addComponent(txtOrderID)))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(cbxPizzaTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 149, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(clear)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(processNew)
+                                .addGap(168, 168, 168)
+                                .addComponent(cancel)))))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(jLabel6)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtOrderID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxPizzaTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(cbxClientID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addGap(20, 20, 20)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(clear)
+                    .addComponent(processNew)
+                    .addComponent(cancel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void processNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processNewActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_processNewActionPerformed
+
+    private void cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelActionPerformed
+
+    private void cbxClientIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxClientIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbxClientIDActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+
+        model = new DefaultTableModel();
+
+        tblOrderDetails.setModel(model);
+        model.addColumn("OrderId");
+        model.addColumn("PizzaType");
+        model.addColumn("Quantity");
+        model.addColumn("TotalCost");
+
+        String st[] = new String[model.getColumnCount()];
+
+        for (int row = 0; row < 4; row++) {
+            model.addRow(st);
+            model.setValueAt(txtOrderID.getText(), row, 0);
+
+        }
+
+        tblOrderDetails.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(cbxPizzaTypes));
+        
+        tblOrderDetails.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                tableRowSelectionChanged(e);
+            }
+
+            private void tableRowSelectionChanged(ListSelectionEvent e) {
+                System.out.println("Clicked table");
+            }
+            
+        });
+        
+        tblOrderDetails.getColumnModel().addColumnModelListener(new TableColumnModelListener(){
+            @Override
+            public void columnAdded(TableColumnModelEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void columnRemoved(TableColumnModelEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void columnMoved(TableColumnModelEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void columnMarginChanged(ChangeEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void columnSelectionChanged(ListSelectionEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+    }//GEN-LAST:event_formWindowOpened
+
+    private void tblOrderDetailsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblOrderDetailsMouseClicked
+        // TODO add your handling code here:
+        
+        int col = tblOrderDetails.getSelectedColumn();
+        int row = tblOrderDetails.getSelectedRow();
+        
+        Object oMyPizzaType = (String)tblOrderDetails.getValueAt(row, 1);
+        Object val = (String)tblOrderDetails.getValueAt(row, 2);
+        
+        if(col == 3){
+            System.out.println("Row = " + row + " Col = " + col);
+            System.out.println("Editing total cost");
+            System.out.println(val);
+            double dCost = Double.parseDouble(getPizzaCost(oMyPizzaType));
+            double dVal = Double.parseDouble((String)tblOrderDetails.getValueAt(row, 2));
+            double totalPizzaCost = dCost * dVal;
+            
+            tblOrderDetails.setValueAt(totalPizzaCost, row, col);
+            
+        }
+    }//GEN-LAST:event_tblOrderDetailsMouseClicked
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(JFPizzaOrder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(JFPizzaOrder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(JFPizzaOrder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(JFPizzaOrder.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new JFPizzaOrder().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancel;
+    private javax.swing.JComboBox<String> cbxClientID;
+    private javax.swing.JComboBox<String> cbxPizzaTypes;
+    private javax.swing.JButton clear;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton processNew;
+    private javax.swing.JTable tblOrderDetails;
+    private javax.swing.JTextField txtOrderID;
+    // End of variables declaration//GEN-END:variables
+}
