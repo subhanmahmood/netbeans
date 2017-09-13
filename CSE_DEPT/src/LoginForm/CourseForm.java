@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 
 /**
@@ -124,6 +126,11 @@ public class CourseForm extends javax.swing.JFrame {
         });
 
         cmdInsert.setText("Insert");
+        cmdInsert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdInsertActionPerformed(evt);
+            }
+        });
 
         cmdBack.setText("Back");
 
@@ -193,6 +200,16 @@ public class CourseForm extends javax.swing.JFrame {
             String[] strings = {  };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        CourseList.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                CourseListPropertyChange(evt);
+            }
+        });
+        CourseList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                CourseListValueChanged(evt);
+            }
         });
         jScrollPane1.setViewportView(CourseList);
 
@@ -277,12 +294,15 @@ public class CourseForm extends javax.swing.JFrame {
                 my_faculty_id = rs.getString(1);
             }
             
-            PreparedStatement pstmt2 = LoginForm.con.prepareStatement(query);
-            pstmt2.setString(1, ComboName.getSelectedItem().toString());
-            ResultSet rs2 = pstmt.executeQuery();            
+            PreparedStatement pstmt2 = LoginForm.con.prepareStatement(query2);
+            pstmt2.setString(1, my_faculty_id);
+            ResultSet rs2 = pstmt2.executeQuery();            
             ResultSetMetaData rsmd2 = rs2.getMetaData();
             
+            System.out.println(rs.next());
+            
             while(rs2.next()){
+                
                 model.addElement(rs2.getString(1));
             }
             CourseList.setModel(model);
@@ -293,6 +313,43 @@ public class CourseForm extends javax.swing.JFrame {
             dialog.setVisible(true);
         }
     }//GEN-LAST:event_cmdSelectActionPerformed
+
+    private void CourseListPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_CourseListPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CourseListPropertyChange
+
+    private void CourseListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_CourseListValueChanged
+        // TODO add your handling code here:
+        javax.swing.JTextField[] c_field = {CourseField, ScheduleField, ClassroomField, CreditsField, EnrollmentField};
+        
+        if(!CourseList.getValueIsAdjusting()){
+            String courseid = (String) CourseList.getSelectedValue();
+            if(courseid != null){
+                String cQuery = "SELECT course, schedule, classroom, credit " + "enrollment FROM course WHERE idcourse = ?";
+                try{
+                    PreparedStatement pstmt = LoginForm.con.prepareStatement(cQuery);
+                    pstmt.setString(1, courseid);
+                    ResultSet rs = pstmt.executeQuery();
+                    ResultSetMetaData rsmd = rs.getMetaData();
+                    System.out.println(rsmd.getColumnName(5));
+                    while(rs.next()){
+                        for(int i = 1; i < 6; i++){
+                            c_field[i - 1].setText(rs.getString(i));
+                        }
+                    }
+                } catch (SQLException ex) {
+                    dialog.setMessage("ERROR: " + ex.getMessage());
+                    dialog.setVisible(true);
+                }
+            }
+        }
+    }//GEN-LAST:event_CourseListValueChanged
+
+    private void cmdInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdInsertActionPerformed
+        // TODO add your handling code here:
+        
+       
+    }//GEN-LAST:event_cmdInsertActionPerformed
 
     /**
      * @param args the command line arguments

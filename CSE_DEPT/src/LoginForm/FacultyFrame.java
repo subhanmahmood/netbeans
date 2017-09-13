@@ -5,11 +5,16 @@
  */
 package LoginForm;
 
+import java.awt.List;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,21 +30,20 @@ public class FacultyFrame extends javax.swing.JFrame {
     public FacultyFrame() {
         initComponents();
         this.setLocationRelativeTo(null);
-        String[] ComboItems = {
-            "Nilesh Jogoo",
-            "Satish Bhalla",
-            "Black Anderson",
-            "Steve Johnson",
-            "Jenney King",
-            "Alice Brown",
-            "Denny Angles",
-            "Jeff Henry"
-        };
+        String query = "SELECT * FROM faculty";
+        try {
+            Statement stmt = LoginForm.con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while(rs.next()){
+                ComboName.addItem(rs.getString("faculty_name"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FacultyFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+       
         ComboMethod.addItem("Runtime Object Method");
         ComboMethod.addItem("Java execute() Method");
-        for (int i = 0; i < ComboItems.length; i++) {
-            ComboName.addItem(ComboItems[i]);
-        }
     }
 
     /**
@@ -68,6 +72,10 @@ public class FacultyFrame extends javax.swing.JFrame {
         PhoneField = new javax.swing.JTextField();
         CollegeField = new javax.swing.JTextField();
         EmailField = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        IDField = new javax.swing.JTextField();
+        NameField = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
         cmdSelect = new javax.swing.JButton();
         cmdInsert = new javax.swing.JButton();
         cmdUpdate = new javax.swing.JButton();
@@ -128,32 +136,46 @@ public class FacultyFrame extends javax.swing.JFrame {
 
         jLabel7.setText("Email");
 
+        jLabel8.setText("Faculty ID");
+
+        jLabel9.setText("Name");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(53, 53, 53)
+                        .addComponent(NameField))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
-                        .addGap(23, 23, 23)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(PhoneField, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
-                            .addComponent(OfficeField)
-                            .addComponent(TitleField)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(EmailField)
-                            .addComponent(CollegeField))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel3)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel5))
+                                    .addGap(23, 23, 23)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(PhoneField, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                                        .addComponent(OfficeField)
+                                        .addComponent(TitleField)))
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel6)
+                                        .addComponent(jLabel7))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(EmailField)
+                                        .addComponent(CollegeField)
+                                        .addComponent(IDField))))
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,7 +200,15 @@ public class FacultyFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(EmailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(IDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(NameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         cmdSelect.setText("Select");
@@ -189,6 +219,11 @@ public class FacultyFrame extends javax.swing.JFrame {
         });
 
         cmdInsert.setText("Insert");
+        cmdInsert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdInsertActionPerformed(evt);
+            }
+        });
 
         cmdUpdate.setText("Update");
 
@@ -230,20 +265,20 @@ public class FacultyFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(ImageCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ImageCanvas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cmdInsert)
                     .addComponent(cmdSelect)
                     .addComponent(cmdBack)
                     .addComponent(cmdUpdate)
                     .addComponent(cmdDelete))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
 
         pack();
@@ -251,9 +286,9 @@ public class FacultyFrame extends javax.swing.JFrame {
 
     private void cmdSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSelectActionPerformed
         // TODO add your handling code here:
-        javax.swing.JTextField[] f_field = {TitleField, OfficeField, PhoneField, CollegeField, EmailField};
+        javax.swing.JTextField[] f_field = {IDField, NameField, TitleField, OfficeField, PhoneField, CollegeField, EmailField};
 
-        String query = "SELECT title, office, phone, college, email " + "FROM Faculty where faculty_name = ?";
+        String query = "SELECT idFaculty, faculty_name, title, office, phone, college, email " + "FROM Faculty where faculty_name = ?";
         if (ComboMethod.getSelectedItem() == "Runtime Object Method") {
             try {
                 DatabaseMetaData dbmd = LoginForm.con.getMetaData();
@@ -286,6 +321,30 @@ public class FacultyFrame extends javax.swing.JFrame {
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_cmdBackActionPerformed
+
+    private void cmdInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdInsertActionPerformed
+        // TODO add your handling code here:
+        int numInsert = 0;
+        String InsertQuery = "INSERT INTO faculty(idFaculty, faculty_name, office, phone, " + "college, title, email) VALUES ( ?, ?, ?, ?, ?, ? , ?)";
+        try{
+            PreparedStatement pstmt = LoginForm.con.prepareStatement(InsertQuery);
+            pstmt.setString(1, IDField.getText());
+            pstmt.setString(2, NameField.getText());
+            pstmt.setString(3, OfficeField.getText());
+            pstmt.setString(4, PhoneField.getText());
+            pstmt.setString(5, CollegeField.getText());
+            pstmt.setString(6, TitleField.getText());
+            pstmt.setString(7, EmailField.getText());
+            
+            numInsert = pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            dialog.setMessage("ERROR: " + ex.getMessage());
+            dialog.setVisible(true);
+        }
+        System.out.println("The number of the inserted row is " + numInsert);
+        
+        ComboName.addItem(NameField.getText());
+    }//GEN-LAST:event_cmdInsertActionPerformed
 
     /**
      * @param args the command line arguments
@@ -327,7 +386,9 @@ public class FacultyFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> ComboMethod;
     private javax.swing.JComboBox<String> ComboName;
     private javax.swing.JTextField EmailField;
+    private javax.swing.JTextField IDField;
     private java.awt.Canvas ImageCanvas;
+    private javax.swing.JTextField NameField;
     private javax.swing.JTextField OfficeField;
     private javax.swing.JTextField PhoneField;
     private javax.swing.JTextField TitleField;
@@ -343,6 +404,8 @@ public class FacultyFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
